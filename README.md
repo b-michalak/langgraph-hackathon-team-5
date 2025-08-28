@@ -1,0 +1,1 @@
+Address data processing tool - address data can be provided in various forms, and it may be impossible to write precise rules for normalising it. Agents can: format text, find typos, check if the address is correct (actually exists).
