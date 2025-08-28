@@ -1,1 +1,7 @@
 langgraph-cli
+langgraph-cli[inmem]
+langgraph
+langgraph-prebuilt
+langchain-core
+langchain-community
+langchain-openai
