@@ -52,13 +52,31 @@ class Result(BaseModel):
 class SearchQuery(BaseModel):
     search_query: str = Field(None, description="Search query for retrieval.")
 
-
-class ResearchGraphState(TypedDict):
+class Address(TypedDict):
     city: str  # City
     zip_code: str  # Zip code
     country: str  # Country
     province: str  # Province
-    address_lines: List[str]  # Address lines
+    address_lines: List[str]
+
+class GraphState(TypedDict):
+    address: Address
+    matchedAddresses: List[Address]
+    result: Result
+
+class InputState(TypedDict):
+    address: Address
+
+class FindOutputState(TypedDict):
+    matchedAddresses: List[Address]
+
+class CheckNormalizeInputState(TypedDict):
+    address: Address
+
+class OutputState(TypedDict):
+    normalizedAddress: Address
+    description: str
+    error: bool
 
 
 ### Nodes and edges
@@ -75,17 +93,17 @@ find_address_llm_instructions = """You are tasked to find the address. Follow th
 4. In the description field, include any additional context or comments about the address."""
 
 
-def find_address_llm(state: ResearchGraphState):
+def find_address_llm(state: InputState):
     """ Create analysts """
 
-    city = state['city']
-    zip_code = state['zip_code']
-    country = state['country']
-    province = state['province']
-    address_lines = state['address_lines']
+    city = state['address']['city']
+    zip_code = state['address']['zip_code']
+    country = state['address']['country']
+    province = state['address']['province']
+    address_lines = state['address']['address_lines']
 
     # Enforce structured output
-    structured_llm = llm.with_structured_output(Result)
+    structured_llm = llm.with_structured_output(FindOutputState)
 
     # System message
     system_message = find_address_llm_instructions.format(city=city,
@@ -97,7 +115,7 @@ def find_address_llm(state: ResearchGraphState):
     result = structured_llm.invoke(
         [SystemMessage(content=system_message)] + [HumanMessage(content="Find the address based on provided details.")])
 
-    return {"result": result.address}
+    return result
 
 
 
@@ -125,17 +143,17 @@ Follow these instructions carefully:
 """
 
 
-def check_normalize_address_llm(state: ResearchGraphState):
+def check_normalize_address_llm(state: CheckNormalizeInputState):
     """Check the address for correctness and normalize it if possible"""
 
-    city = state['city']
-    zip_code = state['zip_code']
-    country = state['country']
-    province = state['province']
-    address_lines = state['address_lines']
+    city = state['address']['city']
+    zip_code = state['address']['zip_code']
+    country = state['address']['country']
+    province = state['address']['province']
+    address_lines = state['address']['address_lines']
 
     # Enforce structured output
-    structured_llm = llm.with_structured_output(Result)
+    structured_llm = llm.with_structured_output(OutputState)
 
     # System message
     system_message = check_normalize_address_llm_instructions.format(city=city,
@@ -147,10 +165,10 @@ def check_normalize_address_llm(state: ResearchGraphState):
     result = structured_llm.invoke(
         [SystemMessage(content=system_message)] + [HumanMessage(content="Find the address based on provided details.")])
 
-    return {"result": result.address}
+    return result
 
 # Add nodes and edges
-builder = StateGraph(ResearchGraphState)
+builder = StateGraph(GraphState)
 builder.add_node("find_address_llm", find_address_llm)
 builder.add_node("check_normalize_address_llm", check_normalize_address_llm)
 
