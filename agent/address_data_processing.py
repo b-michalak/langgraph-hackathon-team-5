@@ -113,12 +113,20 @@ def web_search_address(state: WebSearchInputState):
     tavily_search = TavilySearchResults(max_results=3)
     web_search_info = tavily_search.invoke(combined_address)
 
-    formatted_web_search_info = "\n\n---\n\n".join(
-        [
-            f'<document href="{doc["url"]}"/>\n{doc["content"]}\n</document>'
-            for doc in web_search_info
-        ]
-    )
+    # If web_search_info is not a string or proper list, default to empty string
+    if not isinstance(web_search_info, (str, list)):
+        web_search_info = ""
+
+    if isinstance(web_search_info, str):
+        formatted_web_search_info = web_search_info
+    else:
+        # web_search_info is a list of dictionaries
+        formatted_web_search_info = "\n\n---\n\n".join(
+            [
+                f'<document href="{doc["url"]}"/>\n{doc["content"]}\n</document>'
+                for doc in web_search_info
+            ]
+        ) if web_search_info else ""
 
     system_message = web_search_address_instructions.format(formatted_web_search_info=formatted_web_search_info,
                                                             city=city,

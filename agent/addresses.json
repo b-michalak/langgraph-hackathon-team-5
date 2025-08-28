@@ -1,0 +1,75 @@
+[
+  {
+    "city": "warszawa",
+    "zip_code": "00-001",
+    "province": "mazowieckie",
+    "country": "PL",
+    "address_lines": [
+      "ul. Marszałkowska 1"
+    ]
+  },
+  {
+    "city": "kraków",
+    "zip_code": "30-001",
+    "province": "małopolskie",
+    "country": "PL",
+    "address_lines": [
+      "Rynek Główny 1"
+    ]
+  },
+  {
+    "city": "gdańsk",
+    "zip_code": "80-001",
+    "province": "pomorskie",
+    "country": "PL",
+    "address_lines": [
+      "ul. Długa 47"
+    ]
+  },
+  {
+    "city": "wrocław",
+    "zip_code": "50-001",
+    "province": "dolnośląskie",
+    "country": "PL",
+    "address_lines": [
+      "Rynek 1"
+    ]
+  },
+  {
+    "city": "poznań",
+    "zip_code": "60-001",
+    "province": "wielkopolskie",
+    "country": "PL",
+    "address_lines": [
+      "Stary Rynek 1"
+    ]
+  },
+  {
+    "city": "new york",
+    "zip_code": "10001",
+    "province": "ny",
+    "country": "US",
+    "address_lines": [
+      "350 5th Ave"
+    ]
+  },
+  {
+    "city": "london",
+    "zip_code": "SW1A 1AA",
+    "province": "england",
+    "country": "UK",
+    "address_lines": [
+      "Buckingham Palace"
+    ]
+  },
+  {
+    "city": "paris",
+    "zip_code": "75001",
+    "province": "île-de-france",
+    "country": "FR",
+    "address_lines": [
+      "Place du Louvre"
+    ]
+  }
+]
+
