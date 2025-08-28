@@ -1,7 +1,7 @@
 {
   "dockerfile_lines": [],
   "graphs": {
-    "simple_graph": "./agent/simple.py:graph"
+    "address_data_processing": "./agent/address_data_processing.py:graph"
   },
   "env": "./agent/.env",
   "python_version": "3.11",
