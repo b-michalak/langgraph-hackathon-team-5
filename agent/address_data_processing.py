@@ -1,10 +1,10 @@
 from typing import List
 
+from langchain_community.tools import TavilySearchResults
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import AzureChatOpenAI
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
-from pydantic import BaseModel, Field
 from typing_extensions import TypedDict, Literal
 
 ### LLM
@@ -19,11 +19,6 @@ llm = AzureChatOpenAI(
 )
 
 
-### Schema 
-
-class SearchQuery(BaseModel):
-    search_query: str = Field(None, description="Search query for retrieval.")
-
 class Address(TypedDict):
     city: str  # City
     zip_code: str  # Zip code
@@ -31,8 +26,10 @@ class Address(TypedDict):
     province: str  # Province
     address_lines: List[str]
 
+
 class AddressWithId(Address):
     id: str  # Unique identifier from the database
+
 
 class GraphState(TypedDict):
     address: Address
@@ -41,16 +38,29 @@ class GraphState(TypedDict):
     description: str
     error: bool
 
-class InputState(TypedDict):
+
+class WebSearchInputState(TypedDict):
     address: Address
+
+
+class WebSearchOutputState(TypedDict):
+    description: str
+
+
+class FindInputState(TypedDict):
+    address: Address
+    description: str
+
 
 class FindOutputState(TypedDict):
     matchedAddresses: List[AddressWithId]
 
+
 class CheckNormalizeInputState(TypedDict):
     address: Address
 
-class OutputState(TypedDict):
+
+class NormalizeOutputState(TypedDict):
     normalizedAddress: Address
     description: str
     error: bool
@@ -58,9 +68,80 @@ class OutputState(TypedDict):
 
 ### Nodes and edges
 
-find_address_llm_instructions = """You are provided with a list of addresses. Check if the provided address
-matches any of the addresses in the list. Apply fuzzy matching and real-world knowledge to find the best match.
-Add all matching addresses to the "matchedAddresses" field in the output. If no addresses match, return an empty list in this field.
+web_search_address_instructions = """You are an AI assistant specializing in finding information about the address data.
+
+Your task is to take a information from the web search about the address and return the description about it.
+
+The input is a list of web search results:
+<formatted_web_search_info>
+    {formatted_web_search_info}
+<formatted_web_search_info/>
+
+The address to validate is:
+<address>
+    <city>{city}</city>
+    <zip_code>{zip_code}</zip_code>
+    <country>{country}</country>
+    <province>{province}</province>
+    <address_lines>{address_lines}</address_lines>
+</address>
+
+As output provide a description field with any additional context or comments about the address and its validation."""
+
+
+def build_combined_address(address_lines: List[str], city: str, province: str, zip_code: str, country: str) -> str:
+    """Build a combined address string from components."""
+    components = [", ".join(address_lines), city]
+
+    if province:
+        components.append(province)
+
+    components.extend([zip_code, country])
+
+    return ", ".join(components)
+
+
+def web_search_address(state: WebSearchInputState):
+    """ Retrieve information from web search """
+    city = state['address']['city']
+    zip_code = state['address']['zip_code']
+    country = state['address']['country']
+    province = state['address']['province']
+    address_lines = state['address']['address_lines']
+    combined_address = build_combined_address(address_lines, city, province, zip_code, country)
+
+    tavily_search = TavilySearchResults(max_results=3)
+    web_search_info = tavily_search.invoke(combined_address)
+
+    formatted_web_search_info = "\n\n---\n\n".join(
+        [
+            f'<document href="{doc["url"]}"/>\n{doc["content"]}\n</document>'
+            for doc in web_search_info
+        ]
+    )
+
+    system_message = web_search_address_instructions.format(formatted_web_search_info=formatted_web_search_info,
+                                                            city=city,
+                                                            zip_code=zip_code,
+                                                            country=country,
+                                                            province=province,
+                                                            address_lines=", ".join(address_lines))
+
+    structured_llm = llm.with_structured_output(WebSearchOutputState)
+    result = structured_llm.invoke([SystemMessage(content=system_message)])
+
+    return result
+
+
+find_address_llm_instructions = """You are provided with a list of addresses and the description about it from the web search.
+Check if the provided address matches any of the addresses in the list. Apply fuzzy matching and real-world knowledge to find the best match.
+Add all matching addresses to the "matchedAddresses" field in the output.
+If no addresses match, return an empty list in this field.
+
+Given:
+- A target address to find
+- A description about the address to find from web search
+- A list of candidate addresses to match against
 
 <address-to-find>
     <city>{city}</city>
@@ -69,6 +150,10 @@ Add all matching addresses to the "matchedAddresses" field in the output. If no 
     <province>{province}</province>
     <address_lines>{address_lines}</address_lines>
 </address-to-find>
+
+<description>
+    {description}
+<description/>
 
 <addresses-to-match-against>
     <address>
@@ -79,7 +164,7 @@ Add all matching addresses to the "matchedAddresses" field in the output. If no 
         <province>mazowieckie</province>
         <address_lines>Pl. Konstytucji 12/3</address_lines>
     </address>
-        <address>
+    <address>
         <id>2</id>
         <city>Kraków</city>
         <zip_code>31-001</zip_code>
@@ -99,7 +184,7 @@ Add all matching addresses to the "matchedAddresses" field in the output. If no 
 """
 
 
-def find_address_llm(state: InputState):
+def find_address_llm(state: FindInputState):
     """ Create analysts """
 
     city = state['address']['city']
@@ -107,6 +192,7 @@ def find_address_llm(state: InputState):
     country = state['address']['country']
     province = state['address']['province']
     address_lines = state['address']['address_lines']
+    description = state['description']
 
     # Enforce structured output
     structured_llm = llm.with_structured_output(FindOutputState)
@@ -116,19 +202,22 @@ def find_address_llm(state: InputState):
                                                           zip_code=zip_code,
                                                           country=country,
                                                           province=province,
-                                                          address_lines=", ".join(address_lines))
+                                                          address_lines=", ".join(address_lines),
+                                                          description=description)
     # Generate question
     result = structured_llm.invoke(
         [SystemMessage(content=system_message)] + [HumanMessage(content="Find the address based on provided details.")])
 
     return result
 
-def was_address_found(state: GraphState) -> Literal[END,"check_normalize_address_llm"]:
+
+def was_address_found(state: GraphState) -> Literal[END, "check_normalize_address_llm"]:
     """Check if any address was found"""
     if len(state['matchedAddresses']) > 0:
         return END
     else:
         return "check_normalize_address_llm"
+
 
 check_normalize_address_llm_instructions = """Your task is checking and normalizing the address provided below.
 The input address is:
@@ -166,7 +255,7 @@ def check_normalize_address_llm(state: CheckNormalizeInputState):
     address_lines = state['address']['address_lines']
 
     # Enforce structured output
-    structured_llm = llm.with_structured_output(OutputState)
+    structured_llm = llm.with_structured_output(NormalizeOutputState)
 
     # System message
     system_message = check_normalize_address_llm_instructions.format(city=city,
@@ -174,19 +263,23 @@ def check_normalize_address_llm(state: CheckNormalizeInputState):
                                                                      country=country,
                                                                      province=province,
                                                                      address_lines=", ".join(address_lines))
-    # Generate question 
+    # Generate question
     result = structured_llm.invoke(
-        [SystemMessage(content=system_message)] + [HumanMessage(content="Validate and normalize the address based on provided details.")])
+        [SystemMessage(content=system_message)] + [
+            HumanMessage(content="Validate and normalize the address based on provided details.")])
 
     return result
 
+
 # Add nodes and edges
 builder = StateGraph(GraphState)
+builder.add_node("web_search_address", web_search_address)
 builder.add_node("find_address_llm", find_address_llm)
 builder.add_node("check_normalize_address_llm", check_normalize_address_llm)
 
 # Logic
-builder.add_edge(START, "find_address_llm")
+builder.add_edge(START, "web_search_address")
+builder.add_edge("web_search_address", "find_address_llm")
 builder.add_conditional_edges("find_address_llm", was_address_found)
 builder.add_edge("check_normalize_address_llm", END)
 
