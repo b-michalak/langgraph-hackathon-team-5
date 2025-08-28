@@ -40,10 +40,13 @@ class Result(BaseModel):
     description: str = Field(
         description="Comment about the address.",
     )
+    error: bool = Field(
+        description="Indicates if there was an error in processing the address.",
+    )
 
     @property
     def address(self) -> str:
-        return f"City: {self.city}\nZip code: {self.zip_code}\nCountry: {self.country}\nProvince: {self.province}\nAddress Lines: {', '.join(self.address_lines)}\nDescription: {self.description}"
+        return f"error: {self.error}\nCity: {self.city}\nZip code: {self.zip_code}\nCountry: {self.country}\nProvince: {self.province}\nAddress Lines: {', '.join(self.address_lines)}\nDescription: {self.description}"
 
 
 class SearchQuery(BaseModel):
@@ -90,25 +93,40 @@ def find_address_llm(state: ResearchGraphState):
                                                           country=country,
                                                           province=province,
                                                           address_lines=", ".join(address_lines))
-    # Generate question 
+    # Generate question
     result = structured_llm.invoke(
         [SystemMessage(content=system_message)] + [HumanMessage(content="Find the address based on provided details.")])
 
     return {"result": result.address}
 
 
-normalize_address_instructions = """You are tasked to normalize the address. Follow these instructions carefully:
 
-1. City - Ensure the city name is correctly spelled and capitalized.
-2. Zip Code - Verify the zip code format is appropriate for the country.
-3. Country - Ensure the country name is correctly spelled and capitalized.
-4. Province - Ensure the province or state name is correctly spelled and capitalized.
-5. Address Lines - Standardize the address lines by removing any unnecessary punctuation and ensuring proper capitalization
+check_normalize_address_llm_instructions = """Your task is checking and normalizing the address provided below.
+The input address is:
+<address>
+    <city>{city}</city>
+    <zip_code>{zip_code}</zip_code>
+    <country>{country}</country>
+    <province>{province}</province>
+    <address_lines>{address_lines}</address_lines>
+</address>
+
+Follow these instructions carefully:
+
+- Check if country is a valid country ISO 2-letter code. If not, set the "error" field to "true".
+- Check if the city name is correctly spelled and capitalized. Check that the city exists in the specified country or if you are not aware of a city of such name check if there is a well-known city with a similar name and correct it.
+- If the city name does not resemble any existing city in the specified country, leave it as is.
+- Verify the zip code format is appropriate for the country. Normalize it if it differs from the desired format only due to missing hyphens or similar formatting issues but the type and number of characters is otherwise correct.
+- Ensure the province or state name is correctly spelled and capitalized. Check that the province exists in the specified country.
+- Standardize the address lines by removing any unnecessary punctuation and ensuring proper capitalization.
+- For Polish addresses, normalize the street address to contain the abbreviated street type, for example normalize "Cicha 27" to "Ul. Cicha 27" and "Plac Litewski 2/3" to "Pl. Litewski 2/3".
+- In the description field, include any additional context or comments about the address and its normalization.
+- If the address does not match the pattern of addresses found in the specified country, set the "error" field to "true".
 """
 
 
-def normalize_address_llm(state: ResearchGraphState):
-    """ Create analysts """
+def check_normalize_address_llm(state: ResearchGraphState):
+    """Check the address for correctness and normalize it if possible"""
 
     city = state['city']
     zip_code = state['zip_code']
@@ -120,24 +138,26 @@ def normalize_address_llm(state: ResearchGraphState):
     structured_llm = llm.with_structured_output(Result)
 
     # System message
-    system_message = normalize_address_instructions
-    # Generate question
+    system_message = check_normalize_address_llm_instructions.format(city=city,
+                                                                     zip_code=zip_code,
+                                                                     country=country,
+                                                                     province=province,
+                                                                     address_lines=", ".join(address_lines))
+    # Generate question 
     result = structured_llm.invoke(
-        [SystemMessage(content=system_message)] + [HumanMessage(
-            content=f"Normalize this address: {city}, {zip_code}, {country}, {province}, {', '.join(address_lines)}")])
+        [SystemMessage(content=system_message)] + [HumanMessage(content="Find the address based on provided details.")])
 
     return {"result": result.address}
-
 
 # Add nodes and edges
 builder = StateGraph(ResearchGraphState)
 builder.add_node("find_address_llm", find_address_llm)
-builder.add_node("normalize_address_llm", normalize_address_llm)
+builder.add_node("check_normalize_address_llm", check_normalize_address_llm)
 
 # Logic
 builder.add_edge(START, "find_address_llm")
-builder.add_edge("find_address_llm", "normalize_address_llm")
-builder.add_edge("normalize_address_llm", END)
+builder.add_edge("find_address_llm", "check_normalize_address_llm")
+builder.add_edge("check_normalize_address_llm", END)
 
 # Compile
 graph = builder.compile()
