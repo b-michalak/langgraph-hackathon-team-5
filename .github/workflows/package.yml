@@ -1,0 +1,44 @@
+name: Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-version:
+        description: 'Package version'
+        required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    name: Build and Publish Package
+    runs-on: [ self-hosted, ubuntu-latest ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install requirements
+        run: pip install -r requirements.txt
+
+      - name: Create dockerfile
+        run: |
+          langgraph dockerfile -c langgraph.json Dockerfile
+
+      - name: Build image and publish to Artifactory
+        uses: allegro-actions/artifactory-publish/docker@v1
+        with:
+          username: ${{ secrets.LANGGRAPH_ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.LANGGRAPH_ARTIFACTORY_PASSWORD }}
+          name: langgraph-hackathon-team-5
+          path: pl.allegro.tech.common.langgraph
+          version: ${{ github.event.inputs.package-version }}
+          dockerfile: Dockerfile

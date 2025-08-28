@@ -1,0 +1,11 @@
+{
+  "dockerfile_lines": [],
+  "graphs": {
+    "simple_graph": "./agent/simple.py:graph"
+  },
+  "env": "./agent/.env",
+  "python_version": "3.11",
+  "dependencies": [
+    "./agent"
+  ]
+}
