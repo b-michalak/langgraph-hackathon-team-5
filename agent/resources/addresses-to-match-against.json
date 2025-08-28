@@ -1,0 +1,370 @@
+{
+  "PL": [
+    {
+      "city": "warszawa",
+      "zip_code": "00-001",
+      "province": "mazowieckie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Marszałkowska 1"
+      ]
+    },
+    {
+      "city": "kraków",
+      "zip_code": "31-002",
+      "province": "małopolskie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Floriańska 15/2"
+      ]
+    },
+    {
+      "city": "gdańsk",
+      "zip_code": "80-001",
+      "province": "pomorskie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Długa 45"
+      ]
+    },
+    {
+      "city": "wrocław",
+      "zip_code": "50-001",
+      "province": "dolnośląskie",
+      "country": "PL",
+      "address_lines": [
+        "pl. Solny 12"
+      ]
+    },
+    {
+      "city": "poznań",
+      "zip_code": "61-701",
+      "province": "wielkopolskie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Św. Marcin 78/5"
+      ]
+    },
+    {
+      "city": "łódź",
+      "zip_code": "90-001",
+      "province": "łódzkie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Piotrkowska 104"
+      ]
+    },
+    {
+      "city": "szczecin",
+      "zip_code": "70-001",
+      "province": "zachodniopomorskie",
+      "country": "PL",
+      "address_lines": [
+        "al. Niepodległości 32"
+      ]
+    },
+    {
+      "city": "lublin",
+      "zip_code": "20-001",
+      "province": "lubelskie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Krakowskie Przedmieście 58"
+      ]
+    },
+    {
+      "city": "katowice",
+      "zip_code": "40-001",
+      "province": "śląskie",
+      "country": "PL",
+      "address_lines": [
+        "ul. 3 Maja 12"
+      ]
+    },
+    {
+      "city": "białystok",
+      "zip_code": "15-001",
+      "province": "podlaskie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Lipowa 25"
+      ]
+    }
+  ],
+  "CZ": [
+    {
+      "city": "praha",
+      "zip_code": "110 00",
+      "province": "praha",
+      "country": "CZ",
+      "address_lines": [
+        "Václavské náměstí 28"
+      ]
+    },
+    {
+      "city": "brno",
+      "zip_code": "602 00",
+      "province": "jihomoravský",
+      "country": "CZ",
+      "address_lines": [
+        "Masarykova 25"
+      ]
+    },
+    {
+      "city": "ostrava",
+      "zip_code": "702 00",
+      "province": "moravskoslezský",
+      "country": "CZ",
+      "address_lines": [
+        "Nádražní 12"
+      ]
+    },
+    {
+      "city": "plzeň",
+      "zip_code": "301 00",
+      "province": "plzeňský",
+      "country": "CZ",
+      "address_lines": [
+        "náměstí Republiky 1"
+      ]
+    },
+    {
+      "city": "liberec",
+      "zip_code": "460 01",
+      "province": "liberecký",
+      "country": "CZ",
+      "address_lines": [
+        "náměstí Dr. Edvarda Beneše 1"
+      ]
+    },
+    {
+      "city": "olomouc",
+      "zip_code": "771 11",
+      "province": "olomoucký",
+      "country": "CZ",
+      "address_lines": [
+        "Horní náměstí 15"
+      ]
+    },
+    {
+      "city": "české budějovice",
+      "zip_code": "370 01",
+      "province": "jihočeský",
+      "country": "CZ",
+      "address_lines": [
+        "náměstí Přemysla Otakara II. 1"
+      ]
+    },
+    {
+      "city": "hradec králové",
+      "zip_code": "500 03",
+      "province": "královéhradecký",
+      "country": "CZ",
+      "address_lines": [
+        "Velké náměstí 1"
+      ]
+    },
+    {
+      "city": "ústí nad labem",
+      "zip_code": "400 01",
+      "province": "ústecký",
+      "country": "CZ",
+      "address_lines": [
+        "Mírové náměstí 20"
+      ]
+    },
+    {
+      "city": "pardubice",
+      "zip_code": "530 02",
+      "province": "pardubický",
+      "country": "CZ",
+      "address_lines": [
+        "náměstí Republiky 1"
+      ]
+    }
+  ],
+  "SK": [
+    {
+      "city": "bratislava",
+      "zip_code": "811 01",
+      "province": "bratislavský",
+      "country": "SK",
+      "address_lines": [
+        "Hlavné námestie 8"
+      ]
+    },
+    {
+      "city": "košice",
+      "zip_code": "040 01",
+      "province": "košický",
+      "country": "SK",
+      "address_lines": [
+        "Hlavná ulica 32"
+      ]
+    },
+    {
+      "city": "žilina",
+      "zip_code": "010 01",
+      "province": "žilinský",
+      "country": "SK",
+      "address_lines": [
+        "Mariánske námestie 4"
+      ]
+    },
+    {
+      "city": "nitra",
+      "zip_code": "949 01",
+      "province": "nitrianský",
+      "country": "SK",
+      "address_lines": [
+        "Svätoplukovo námestie 7"
+      ]
+    },
+    {
+      "city": "banská bystrica",
+      "zip_code": "974 01",
+      "province": "banskobystrický",
+      "country": "SK",
+      "address_lines": [
+        "SNP námestie 1"
+      ]
+    },
+    {
+      "city": "prešov",
+      "zip_code": "080 01",
+      "province": "prešovský",
+      "country": "SK",
+      "address_lines": [
+        "Hlavná ulica 67"
+      ]
+    },
+    {
+      "city": "trnava",
+      "zip_code": "917 01",
+      "province": "trnavský",
+      "country": "SK",
+      "address_lines": [
+        "Trojičné námestie 1"
+      ]
+    },
+    {
+      "city": "trenčín",
+      "zip_code": "911 01",
+      "province": "trenčianský",
+      "country": "SK",
+      "address_lines": [
+        "Mierové námestie 9"
+      ]
+    },
+    {
+      "city": "martin",
+      "zip_code": "036 01",
+      "province": "žilinský",
+      "country": "SK",
+      "address_lines": [
+        "SNP námestie 1"
+      ]
+    },
+    {
+      "city": "poprad",
+      "zip_code": "058 01",
+      "province": "prešovský",
+      "country": "SK",
+      "address_lines": [
+        "Sobotské námestie 2"
+      ]
+    }
+  ],
+  "HU": [
+    {
+      "city": "budapest",
+      "zip_code": "1051",
+      "province": "budapest",
+      "country": "HU",
+      "address_lines": [
+        "Váci utca 15"
+      ]
+    },
+    {
+      "city": "debrecen",
+      "zip_code": "4026",
+      "province": "hajdú-bihar",
+      "country": "HU",
+      "address_lines": [
+        "Piac utca 20"
+      ]
+    },
+    {
+      "city": "szeged",
+      "zip_code": "6720",
+      "province": "csongrád-csanád",
+      "country": "HU",
+      "address_lines": [
+        "Kárász utca 5"
+      ]
+    },
+    {
+      "city": "pécs",
+      "zip_code": "7621",
+      "province": "baranya",
+      "country": "HU",
+      "address_lines": [
+        "Széchenyi tér 9"
+      ]
+    },
+    {
+      "city": "győr",
+      "zip_code": "9021",
+      "province": "győr-moson-sopron",
+      "country": "HU",
+      "address_lines": [
+        "Baross Gábor út 33"
+      ]
+    },
+    {
+      "city": "miskolc",
+      "zip_code": "3525",
+      "province": "borsod-abaúj-zemplén",
+      "country": "HU",
+      "address_lines": [
+        "Széchenyi István utca 107"
+      ]
+    },
+    {
+      "city": "kecskemét",
+      "zip_code": "6000",
+      "province": "bács-kiskun",
+      "country": "HU",
+      "address_lines": [
+        "Kossuth tér 1"
+      ]
+    },
+    {
+      "city": "nyíregyháza",
+      "zip_code": "4400",
+      "province": "szabolcs-szatmár-bereg",
+      "country": "HU",
+      "address_lines": [
+        "Kossuth tér 1"
+      ]
+    },
+    {
+      "city": "székesfehérvár",
+      "zip_code": "8000",
+      "province": "fejér",
+      "country": "HU",
+      "address_lines": [
+        "Városház tér 1"
+      ]
+    },
+    {
+      "city": "szombathely",
+      "zip_code": "9700",
+      "province": "vas",
+      "country": "HU",
+      "address_lines": [
+        "Fő tér 15"
+      ]
+    }
+  ]
+}

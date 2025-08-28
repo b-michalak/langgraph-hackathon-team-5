@@ -1,0 +1,172 @@
+{
+  "exact_matches": [
+    {
+      "city": "warszawa",
+      "zip_code": "00-001",
+      "province": "mazowieckie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Marszałkowska 1"
+      ]
+    },
+    {
+      "city": "praha",
+      "zip_code": "110 00",
+      "province": "praha",
+      "country": "CZ",
+      "address_lines": [
+        "Václavské náměstí 28"
+      ]
+    },
+    {
+      "city": "budapest",
+      "zip_code": "1051",
+      "province": "budapest",
+      "country": "HU",
+      "address_lines": [
+        "Váci utca 15"
+      ]
+    }
+  ],
+  "fuzzy_matches": [
+    {
+      "city": "Warsaw",
+      "zip_code": "00001",
+      "province": "Mazowieckie",
+      "country": "PL",
+      "address_lines": [
+        "Marszalkowska 1"
+      ]
+    },
+    {
+      "city": "kraków",
+      "zip_code": "31-002",
+      "province": "małopolskie",
+      "country": "PL",
+      "address_lines": [
+        "Floriańska 15/2"
+      ]
+    },
+    {
+      "city": "gdansk",
+      "zip_code": "80-001",
+      "province": "pomorskie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Długa 45"
+      ]
+    },
+    {
+      "city": "Prague",
+      "zip_code": "11000",
+      "province": "Prague",
+      "country": "CZ",
+      "address_lines": [
+        "Wenceslas Square 28"
+      ]
+    },
+    {
+      "city": "brno",
+      "zip_code": "602-00",
+      "province": "jihomoravský",
+      "country": "CZ",
+      "address_lines": [
+        "Masarykova 25"
+      ]
+    },
+    {
+      "city": "Bratislava",
+      "zip_code": "81101",
+      "province": "bratislavský",
+      "country": "SK",
+      "address_lines": [
+        "Main Square 8"
+      ]
+    }
+  ],
+  "no_matches": [
+    {
+      "city": "Berlin",
+      "zip_code": "10115",
+      "province": "Berlin",
+      "country": "DE",
+      "address_lines": [
+        "Unter den Linden 1"
+      ]
+    },
+    {
+      "city": "Vienna",
+      "zip_code": "1010",
+      "province": "Vienna",
+      "country": "AT",
+      "address_lines": [
+        "Stephansplatz 1"
+      ]
+    },
+    {
+      "city": "nonexistent city",
+      "zip_code": "99-999",
+      "province": "fake province",
+      "country": "PL",
+      "address_lines": [
+        "ul. Nieistniejąca 999"
+      ]
+    },
+    {
+      "city": "tokyo",
+      "zip_code": "100-0001",
+      "province": "tokyo",
+      "country": "JP",
+      "address_lines": [
+        "1-1-1 Chiyoda"
+      ]
+    }
+  ],
+  "problematic_addresses": [
+    {
+      "city": "",
+      "zip_code": "31-002",
+      "province": "małopolskie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Floriańska 15/2"
+      ]
+    },
+    {
+      "city": "warszawa",
+      "zip_code": "invalid-zip",
+      "province": "mazowieckie",
+      "country": "PL",
+      "address_lines": [
+        "ul. Marszałkowska 1"
+      ]
+    },
+    {
+      "city": "wrocław",
+      "zip_code": "50-001",
+      "province": "",
+      "country": "PL",
+      "address_lines": [
+        "pl. Solny 12"
+      ]
+    },
+    {
+      "city": "poznań",
+      "zip_code": "61-701",
+      "province": "wielkopolskie",
+      "country": null,
+      "address_lines": [
+        "ul. Św. Marcin 78/5"
+      ]
+    },
+    {
+      "city": "košice",
+      "zip_code": "040 01",
+      "province": "košický",
+      "country": "SK",
+      "address_lines": [
+        ""
+      ]
+    }
+  ]
+}
