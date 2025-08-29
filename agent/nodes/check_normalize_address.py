@@ -3,30 +3,7 @@ import json
 import os
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import AzureChatOpenAI
-from typing_extensions import TypedDict
-
-
-# Type definitions
-class Address(TypedDict):
-    city: str
-    zip_code: str
-    country: str
-    province: str
-    address_lines: List[str]
-
-
-class AddressWithId(Address):
-    id: str
-
-
-class CheckNormalizeInputState(TypedDict):
-    address: Address
-
-
-class NormalizeOutputState(TypedDict):
-    normalizedAddress: Address
-    description: str
-    error: bool
+from models import Address, AddressWithId, CheckNormalizeInputState, NormalizeOutputState
 
 
 # LLM instance
@@ -95,7 +72,7 @@ def save_new_address(new_address: Address) -> AddressWithId:
     # Generate a unique ID for the new address
     # Use format: NEW_{country}_{index}
     country_code = new_address['country'].upper()
-    existing_count = len([addr for addr in existing_addresses if addr['id'].startswith(f"NEW_{country_code}")])
+    existing_count = len([addr for addr in existing_addresses if addr['id'].startswith(f"{country_code}")])
     new_id = f"{country_code}_{existing_count}"
 
     # Create address with ID

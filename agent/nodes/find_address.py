@@ -1,28 +1,11 @@
-from typing import List
 import json
 import os
+from typing import List
+
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import AzureChatOpenAI
-from typing_extensions import TypedDict
 
-# Type definitions
-class Address(TypedDict):
-    city: str
-    zip_code: str
-    country: str
-    province: str
-    address_lines: List[str]
-
-class AddressWithId(Address):
-    id: str
-
-class FindInputState(TypedDict):
-    address: Address
-    description: str
-
-class FindOutputState(TypedDict):
-    matchedAddresses: List[AddressWithId]
-    newAddress: Address
+from models import Address, AddressWithId, FindInputState, FindOutputState
 
 # LLM instance
 llm = AzureChatOpenAI(
@@ -102,6 +85,7 @@ def load_addresses_to_match() -> List[AddressWithId]:
         return []
 
     return addresses_with_ids
+
 
 def find_address_llm(state: FindInputState):
     """ Find matching addresses from the database """

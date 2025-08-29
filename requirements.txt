@@ -1,3 +1,4 @@
+typing-extensions
 langgraph-cli
 langgraph-cli[inmem]
 langgraph

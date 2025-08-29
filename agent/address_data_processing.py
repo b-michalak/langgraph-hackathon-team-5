@@ -1,28 +1,11 @@
-from typing import List
-
 from langgraph.constants import Send
 from langgraph.graph import END, START, StateGraph
-from typing_extensions import TypedDict, Literal
+from typing_extensions import Literal
 
+from models import GraphState
 from nodes.check_normalize_address import check_normalize_address_llm
 from nodes.find_address import find_address_llm
 from nodes.web_search_address import web_search_address
-
-
-class Address(TypedDict):
-    city: str  # City
-    zip_code: str  # Zip code
-    country: str  # Country
-    province: str  # Province
-    address_lines: List[str]
-
-
-class GraphState(TypedDict):
-    address: Address
-    normalizedAddress: Address
-    matchedAddresses: List[Address]
-    description: str
-    error: bool
 
 
 def was_address_found(state: GraphState) -> Literal[END, "check_normalize_address_llm"]:

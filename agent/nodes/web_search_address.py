@@ -1,26 +1,10 @@
 from typing import List
+
 from langchain_community.tools import TavilySearchResults
 from langchain_core.messages import SystemMessage
 from langchain_openai import AzureChatOpenAI
-from typing_extensions import TypedDict
 
-
-# Type definitions
-class Address(TypedDict):
-    city: str
-    zip_code: str
-    country: str
-    province: str
-    address_lines: List[str]
-
-
-class WebSearchInputState(TypedDict):
-    address: Address
-
-
-class WebSearchOutputState(TypedDict):
-    description: str
-
+from models import WebSearchInputState, WebSearchOutputState
 
 # LLM instance
 llm = AzureChatOpenAI(
