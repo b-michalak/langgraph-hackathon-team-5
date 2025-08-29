@@ -22,6 +22,7 @@ class FindInputState(TypedDict):
 
 class FindOutputState(TypedDict):
     matchedAddresses: List[AddressWithId]
+    newAddress: Address
 
 # LLM instance
 llm = AzureChatOpenAI(
@@ -33,14 +34,14 @@ llm = AzureChatOpenAI(
     max_retries=2,
 )
 
-find_address_llm_instructions = """You are provided with a list of addresses and the description about it from the web search.
+find_address_llm_instructions = """You are provided with a list of addresses and the description about problems with address.
 Check if the provided address matches any of the addresses in the list. Apply fuzzy matching and real-world knowledge to find the best match.
 Add all matching addresses to the "matchedAddresses" field in the output.
 If no addresses match, return an empty list in this field.
 
 Given:
 - A target address to find
-- A description about the address to find from web search
+- A description about problems with address (if none, the field is empty)
 - A list of candidate addresses to match against
 
 <address-to-find>
@@ -58,7 +59,10 @@ Given:
 <addresses-to-match-against>
     {addresses_to_match_against}
 </addresses-to-match-against>
-"""
+
+If the address to find is incomplete or has errors, use the description to help identify potential matches.
+If can not find any matches, return corrected address and empty list of matched addresses.
+The matching should be done based on the overall similarity of the address components, not just exact text matches."""
 
 
 def load_addresses_to_match() -> List[AddressWithId]:
@@ -98,7 +102,6 @@ def load_addresses_to_match() -> List[AddressWithId]:
         return []
 
     return addresses_with_ids
-
 
 def find_address_llm(state: FindInputState):
     """ Find matching addresses from the database """

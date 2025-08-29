@@ -4,6 +4,7 @@ from langchain_core.messages import SystemMessage
 from langchain_openai import AzureChatOpenAI
 from typing_extensions import TypedDict
 
+
 # Type definitions
 class Address(TypedDict):
     city: str
@@ -12,11 +13,14 @@ class Address(TypedDict):
     province: str
     address_lines: List[str]
 
+
 class WebSearchInputState(TypedDict):
     address: Address
 
+
 class WebSearchOutputState(TypedDict):
     description: str
+
 
 # LLM instance
 llm = AzureChatOpenAI(
@@ -30,7 +34,8 @@ llm = AzureChatOpenAI(
 
 web_search_address_instructions = """You are an AI assistant specializing in finding information about the address data.
 
-Your task is to take a information from the web search about the address and return the description about it.
+Your task is to take a information from the web search about the address, check if it's valid and if it's not return the 
+description what's wrong and how to correct that.
 
 The input is a list of web search results:
 <formatted_web_search_info>
@@ -46,7 +51,8 @@ The address to validate is:
     <address_lines>{address_lines}</address_lines>
 </address>
 
-As output provide a description field with any additional context or comments about the address and its validation."""
+As output provide a description field with any additional context or comments how to fix the  address if it's invalid.
+If the address seems valid, return an empty string in the description field."""
 
 
 def build_combined_address(address_lines: List[str], city: str, province: str, zip_code: str, country: str) -> str:

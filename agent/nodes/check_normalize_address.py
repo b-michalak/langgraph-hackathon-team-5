@@ -1,7 +1,10 @@
 from typing import List
+import json
+import os
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import AzureChatOpenAI
 from typing_extensions import TypedDict
+
 
 # Type definitions
 class Address(TypedDict):
@@ -11,13 +14,20 @@ class Address(TypedDict):
     province: str
     address_lines: List[str]
 
+
+class AddressWithId(Address):
+    id: str
+
+
 class CheckNormalizeInputState(TypedDict):
     address: Address
+
 
 class NormalizeOutputState(TypedDict):
     normalizedAddress: Address
     description: str
     error: bool
+
 
 # LLM instance
 llm = AzureChatOpenAI(
@@ -55,6 +65,63 @@ Follow these instructions carefully:
 """
 
 
+def load_new_addresses() -> List[AddressWithId]:
+    """Load existing new addresses from the JSON file."""
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    json_path = os.path.join(current_dir, 'resources', 'new-addresses.json')
+
+    try:
+        with open(json_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            return data
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError as e:
+        print(f"Error parsing new addresses JSON file: {e}")
+        return []
+    except Exception as e:
+        print(f"Error loading new addresses: {e}")
+        return []
+
+
+def save_new_address(new_address: Address) -> AddressWithId:
+    """Save a new address to the new-addresses.json file and return it with an ID."""
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    json_path = os.path.join(current_dir, 'resources', 'new-addresses.json')
+
+    # Load existing new addresses
+    existing_addresses = load_new_addresses()
+
+    # Generate a unique ID for the new address
+    # Use format: NEW_{country}_{index}
+    country_code = new_address['country'].upper()
+    existing_count = len([addr for addr in existing_addresses if addr['id'].startswith(f"NEW_{country_code}")])
+    new_id = f"{country_code}_{existing_count}"
+
+    # Create address with ID
+    address_with_id = AddressWithId(
+        id=new_id,
+        city=new_address['city'],
+        zip_code=new_address['zip_code'],
+        province=new_address['province'],
+        country=new_address['country'],
+        address_lines=new_address['address_lines']
+    )
+
+    # Add to existing addresses
+    existing_addresses.append(address_with_id)
+
+    # Save back to file
+    try:
+        with open(json_path, 'w', encoding='utf-8') as file:
+            json.dump(existing_addresses, file, indent=2, ensure_ascii=False)
+        print(f"Saved new address with ID: {new_id}")
+    except Exception as e:
+        print(f"Error saving new address: {e}")
+
+    return address_with_id
+
+
 def check_normalize_address_llm(state: CheckNormalizeInputState):
     """Check the address for correctness and normalize it if possible"""
 
@@ -78,4 +145,5 @@ def check_normalize_address_llm(state: CheckNormalizeInputState):
         [SystemMessage(content=system_message)] + [
             HumanMessage(content="Validate and normalize the address based on provided details.")])
 
+    save_new_address(result['normalizedAddress'])
     return result
